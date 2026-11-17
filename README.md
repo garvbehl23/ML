@@ -1,89 +1,54 @@
-<div align="center">
+# ML
 
-# 🧠 ML — The Ultimate Machine Learning Resource Hub
+[![tests](https://github.com/garvbehl23/ML/actions/workflows/ci.yml/badge.svg)](https://github.com/garvbehl23/ML/actions/workflows/ci.yml)
 
-**Hands-on notebooks · curated learning paths · cheatsheets · the best books, courses & papers**
+Machine learning notebooks, from-scratch NumPy implementations that are tested against scikit-learn, a reproducible benchmark, and a curated reading list.
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-ready-orange)
-![Jupyter](https://img.shields.io/badge/Jupyter-notebooks-F37626)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+![benchmark](assets/benchmark.png)
 
-</div>
+## Contents
 
----
-
-## 📚 Table of Contents
-- [What's inside](#-whats-inside)
-- [Quick start](#-quick-start)
-- [Algorithm notebooks](#-algorithm-notebooks)
-- [Learning roadmap](#-learning-roadmap)
-- [Curated resources](#-curated-resources)
-- [Cheatsheets](#-cheatsheets)
-- [Contributing](#-contributing)
-
-## 🔥 What's inside
-
-| Section | Description |
+| Path | What it is |
 |---|---|
-| [`ML libraries.ipynb`](ML%20libraries.ipynb) | NumPy, SciPy, pandas, matplotlib crash course |
-| [`Supervised_Learning/`](Supervised_Learning) | 10 notebooks, from linear regression to XGBoost |
-| [`Unsupervised Learning/`](Unsupervised%20Learning) | Clustering: K-Means, DBSCAN, Hierarchical |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Zero-to-job-ready ML roadmap |
-| [`docs/RESOURCES.md`](docs/RESOURCES.md) | Hand-picked books, courses, papers, tools |
-| [`docs/PROJECTS.md`](docs/PROJECTS.md) | Portfolio project ideas by difficulty |
-| [`docs/INTERVIEW.md`](docs/INTERVIEW.md) | ML interview question bank |
-| [`cheatsheets/`](cheatsheets) | Algorithm picker, metrics, scikit-learn workflow |
+| `Supervised_Learning/` | 10 notebooks: linear/logistic regression, KNN, Naive Bayes, SVM, trees, Random Forest, Gradient Boosting, XGBoost, MLP |
+| `Unsupervised Learning/` | K-Means, DBSCAN, hierarchical clustering |
+| `ML libraries.ipynb` | NumPy / SciPy / pandas / matplotlib warm-up |
+| `from_scratch/` | Linear & logistic regression, KNN, Gaussian NB, K-Means (k-means++), CART decision tree, PCA, in plain NumPy |
+| `tests/` | Each from-scratch model is checked against its scikit-learn equivalent |
+| `benchmarks/` | 8 classifiers x 3 datasets, 5-fold CV, [results](benchmarks/results.md) |
+| `docs/` | [Roadmap](docs/ROADMAP.md), [resources](docs/RESOURCES.md), [project ideas](docs/PROJECTS.md), [interview questions](docs/INTERVIEW.md) |
+| `cheatsheets/` | [Algorithm picker](cheatsheets/algorithm_picker.md), [metrics](cheatsheets/metrics.md), [sklearn workflow](cheatsheets/sklearn_workflow.md) |
 
-## 🚀 Quick start
+## Run it
 
 ```bash
-git clone https://github.com/garvbehl23/ML.git
-cd ML
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+git clone https://github.com/garvbehl23/ML.git && cd ML
 pip install -r requirements.txt
-jupyter lab
+python -m pytest -q tests            # verify the from-scratch models
+python benchmarks/run_benchmark.py   # regenerate the benchmark
+jupyter lab                          # open the notebooks
 ```
 
-## 🧪 Algorithm notebooks
+## From scratch
 
-### Supervised learning
-| Notebook | Type | Key idea |
-|---|---|---|
-| [Linear Regression](Supervised_Learning/Linear_Regression.ipynb) | Regression | Fit a line by minimising squared error |
-| [Logistic Regression](Supervised_Learning/Logistic_Regression.ipynb) | Classification | Sigmoid over a linear model |
-| [KNN](Supervised_Learning/KNN.ipynb) | Both | Predict from the k nearest points |
-| [Naive Bayes](Supervised_Learning/Naive_Bayes.ipynb) | Classification | Bayes' rule + independence assumption |
-| [SVM](Supervised_Learning/SVM.ipynb) | Both | Maximum-margin hyperplane, kernels |
-| [Decision Trees](Supervised_Learning/Decision_Trees.ipynb) | Both | Recursive splits on feature thresholds |
-| [Random Forest](Supervised_Learning/Random_Forest.ipynb) | Both | Bagged trees, decorrelated |
-| [Gradient Boosting](Supervised_Learning/Gradient_Boosting.ipynb) | Both | Sequentially fit residuals |
-| [XGBoost](Supervised_Learning/XGBoost.ipynb) | Both | Regularised, fast gradient boosting |
-| [MLP](Supervised_Learning/MLP.ipynb) | Both | Feed-forward neural network |
+```python
+from from_scratch import KMeans, DecisionTreeClassifier
 
-### Unsupervised learning
-| Notebook | Key idea |
-|---|---|
-| [K-Means](Unsupervised%20Learning/K-means_clustering.ipynb) | Centroid-based partitioning |
-| [DBSCAN](Unsupervised%20Learning/DBSCAN.ipynb) | Density-based, finds arbitrary shapes + noise |
-| [Hierarchical](Unsupervised%20Learning/Hierarchial_Clustering.ipynb) | Dendrogram-based merging |
+km = KMeans(k=3).fit(X)
+km.labels_, km.centers_, km.inertia_
 
-## 🗺 Learning roadmap
-Math → Python → classical ML → deep learning → specialisation → deployment.
-Full week-by-week plan in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+tree = DecisionTreeClassifier(max_depth=4).fit(X_train, y_train)
+tree.predict(X_test)
+```
 
-## 🌟 Curated resources
-Books, courses, papers, datasets and tools: [`docs/RESOURCES.md`](docs/RESOURCES.md).
+Writing these once is the fastest way to stop treating `.fit()` as magic. Each file is short enough to read in one sitting.
 
-## 📝 Cheatsheets
-- [Which algorithm should I use?](cheatsheets/algorithm_picker.md)
-- [Evaluation metrics](cheatsheets/metrics.md)
-- [scikit-learn workflow](cheatsheets/sklearn_workflow.md)
+## Benchmark takeaways
 
-## 🤝 Contributing
-See [CONTRIBUTING.md](CONTRIBUTING.md). New notebooks, resources and fixes are welcome.
+On small, clean tabular data, a standardised SVM or plain logistic regression matches or beats the ensembles, and a single decision tree and Naive Bayes trail by several points. Gradient boosting earns its reputation on larger, messier data, which these three datasets are not. Full numbers in [`benchmarks/results.md`](benchmarks/results.md).
 
-## 📄 License
-[MIT](LICENSE)
+## Contributing
 
-⭐ If this helps you, star the repo!
+New notebooks, fixes and honest resource recommendations are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+MIT licensed.
